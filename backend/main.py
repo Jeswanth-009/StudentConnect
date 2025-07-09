@@ -15,7 +15,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",  # Local development
-        "https://studentconnect0.netlify.app",  # Your actual Netlify frontend URL
+        "https://studentconnect.vercel.app",  # Vercel frontend URL
+        "https://studentconnect-frontend.vercel.app",  # Alternative Vercel frontend URL
         "*"  # Allow all for now - restrict in production
     ],
     allow_credentials=True,
@@ -29,17 +30,29 @@ def read_root():
 
 # Import routes after app creation to avoid circular imports
 try:
-    from routes import auth, posts, comments
+    # Use relative imports for better Vercel compatibility
+    from .routes import auth, posts, comments
+    
     # Include routers
     app.include_router(auth.router, prefix="/api")
     app.include_router(posts.router, prefix="/api")
     app.include_router(comments.router, prefix="/api")
 except ImportError as e:
-    print(f"Warning: Could not import routes: {e}")
-    
-    @app.get("/api/test")
-    def test_fallback():
-        return {"message": "Routes not loaded, but API is working", "error": str(e)}
+    print(f"Warning: Trying absolute imports due to: {e}")
+    try:
+        # Fallback to absolute imports
+        from routes import auth, posts, comments
+        
+        # Include routers
+        app.include_router(auth.router, prefix="/api")
+        app.include_router(posts.router, prefix="/api")
+        app.include_router(comments.router, prefix="/api")
+    except ImportError as e2:
+        print(f"Warning: Could not import routes: {e2}")
+        
+        @app.get("/api/test")
+        def test_fallback():
+            return {"message": "Routes not loaded, but API is working", "error": str(e2)}
 
 # Export app for Vercel
 handler = app

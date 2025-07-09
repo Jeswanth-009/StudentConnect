@@ -11,23 +11,14 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path=parent_dir / '.env')
 
 try:
+    # Import the app from main.py
     from main import app
     
     # This is the handler for Vercel
     handler = app
     
-except ImportError as e:
-    print(f"Import error: {e}")
-    from fastapi import FastAPI
-    app = FastAPI()
-    
-    @app.get("/")
-    def root():
-        return {"message": "API is running but main app failed to load", "error": str(e)}
-    
-    handler = app
     print("✅ Successfully imported app from main.py")
-except ImportError as e:
+except Exception as e:
     print(f"❌ Import error: {e}")
     # Create a simple fallback app
     from fastapi import FastAPI
@@ -35,7 +26,10 @@ except ImportError as e:
     
     @app.get("/")
     def read_root():
-        return {"message": "Fallback app - Import error occurred", "error": str(e)}
+        return {"message": "Fallback app - Error occurred during import", "error": str(e)}
+    
+    # Set the handler for Vercel
+    handler = app
 
 # Export the app for Vercel
 # Vercel expects the app to be available at the module level
