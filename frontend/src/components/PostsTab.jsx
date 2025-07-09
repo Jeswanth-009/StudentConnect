@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -19,7 +19,6 @@ import {
   DialogActions,
   Paper,
   Avatar,
-  IconButton,
   Fab,
   Accordion,
   AccordionSummary,
@@ -36,11 +35,9 @@ import {
 } from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
 import { postsAPI, commentsAPI } from '../api/api';
-import { useAuth } from '../contexts/AuthContext';
 
 const PostsTab = () => {
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('');
@@ -48,15 +45,9 @@ const PostsTab = () => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   
-  const { user } = useAuth();
   const createForm = useForm();
 
-  useEffect(() => {
-    fetchPosts();
-  }, [searchTerm, filterType]);
-
-  const fetchPosts = async () => {
-    setLoading(true);
+  const fetchPosts = useCallback(async () => {
     try {
       const params = {};
       if (searchTerm) params.search = searchTerm;
@@ -67,8 +58,11 @@ const PostsTab = () => {
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
-    setLoading(false);
-  };
+  }, [searchTerm, filterType]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   const onCreatePost = async (data) => {
     try {

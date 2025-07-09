@@ -14,7 +14,6 @@ import {
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { authAPI } from '../api/api';
 
 const LoginPage = () => {
   const [tabValue, setTabValue] = useState(0);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -35,20 +35,20 @@ const ProfileTab = () => {
     }
   });
 
-  React.useEffect(() => {
-    if (user?.username) {
-      fetchUserPosts();
-    }
-  }, [user]);
-
-  const fetchUserPosts = async () => {
+  const fetchUserPosts = useCallback(async () => {
     try {
       const response = await postsAPI.getUserPosts(user.username);
       setUserPosts(response.data);
     } catch (error) {
       console.error('Error fetching user posts:', error);
     }
-  };
+  }, [user?.username]);
+
+  React.useEffect(() => {
+    if (user?.username) {
+      fetchUserPosts();
+    }
+  }, [user, fetchUserPosts]);
 
   const onUpdateProfile = async (data) => {
     try {
