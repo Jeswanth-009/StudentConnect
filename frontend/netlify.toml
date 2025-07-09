@@ -1,6 +1,7 @@
 [build]
   publish = "build"
-  command = "npm run build"
+  command = "npm install && npm run build"
+  base = "frontend"
 
 [[redirects]]
   from = "/*"
@@ -8,4 +9,4 @@
   status = 200
 
 [build.environment]
-  REACT_APP_API_URL = "https://your-backend-url.herokuapp.com"
+  REACT_APP_API_URL = "https://your-backend-url.onrender.com"
