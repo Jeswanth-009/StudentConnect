@@ -3,7 +3,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import auth, posts, comments
 
 # Load environment variables from .env file in the same directory as main.py
 env_path = Path(__file__).parent / '.env'
@@ -28,10 +27,22 @@ app.add_middleware(
 def read_root():
     return {"message": "StudentConnect Backend is running!"}
 
-# Include routers
-app.include_router(auth.router, prefix="/api")
-app.include_router(posts.router, prefix="/api")
-app.include_router(comments.router, prefix="/api")
+# Import routes after app creation to avoid circular imports
+try:
+    from routes import auth, posts, comments
+    # Include routers
+    app.include_router(auth.router, prefix="/api")
+    app.include_router(posts.router, prefix="/api")
+    app.include_router(comments.router, prefix="/api")
+except ImportError as e:
+    print(f"Warning: Could not import routes: {e}")
+    
+    @app.get("/api/test")
+    def test_fallback():
+        return {"message": "Routes not loaded, but API is working", "error": str(e)}
+
+# Export app for Vercel
+handler = app
 
 if __name__ == "__main__":
     import uvicorn
