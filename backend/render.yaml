@@ -3,6 +3,8 @@ services:
     name: studentconnect-backend
     runtime: python3
     buildCommand: |
+      export CARGO_HOME=/tmp/.cargo
+      export RUSTUP_HOME=/tmp/.rustup
       pip install --upgrade pip setuptools wheel
       pip install --only-binary=:all: --no-cache-dir --force-reinstall -r requirements-deploy.txt
     startCommand: uvicorn main:app --host=0.0.0.0 --port=$PORT
