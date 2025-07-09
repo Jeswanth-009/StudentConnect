@@ -4,7 +4,7 @@ services:
     runtime: python3
     buildCommand: |
       pip install --upgrade pip setuptools wheel
-      pip install --only-binary=:all: --constraint constraints.txt --no-cache-dir -r requirements.txt
+      pip install --only-binary=:all: --no-cache-dir --force-reinstall -r requirements.txt
     startCommand: uvicorn main:app --host=0.0.0.0 --port=$PORT
     plan: free
     env: python
@@ -18,3 +18,7 @@ services:
         value: ":all:"
       - key: PIP_NO_BUILD_ISOLATION
         value: "false"
+      - key: PIP_PREFER_BINARY
+        value: "1"
+      - key: PIP_NO_COMPILE
+        value: "1"
