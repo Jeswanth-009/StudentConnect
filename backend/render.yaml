@@ -14,5 +14,3 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
-      - key: CARGO_NET_GIT_FETCH_WITH_CLI
-        value: "true"
