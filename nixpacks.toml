@@ -2,10 +2,7 @@
 providers = ["python"]
 
 [phases.install]
-cmds = ["cd backend && pip install -r requirements-deploy.txt"]
+cmds = ["pip install -r requirements.txt"]
 
 [phases.start]
-cmd = "cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT"
-
-[variables]
-PYTHONPATH = "backend"
+cmd = "uvicorn main:app --host 0.0.0.0 --port $PORT"

@@ -1,6 +1,11 @@
 # Railway.app Deployment Guide - Step by Step
 
-## IMPORTANT: Fix for "Nixpacks build failed - No start command" Error
+## IMPORTANT: Fix for "cd backend && pip install" Error
+
+**Updated Fix - Exit Code 127:**
+1. The backend files have been copied to the root directory
+2. Railway now installs from `requirements.txt` in root
+3. The start command runs `uvicorn main:app` directly from root
 
 If you get an error about Railway detecting Node.js instead of Python:
 1. The empty `package.json` file has been removed
@@ -44,6 +49,13 @@ Railway will give you a URL like: `https://your-app-name.railway.app`
 Update your frontend's API URL to point to the new Railway URL.
 
 ## Common Issues and Solutions
+
+### "cd backend && pip install" fails with exit code 127
+**Cause:** Railway can't find the backend directory or has path issues
+**Solution:** 
+- Copied all backend files to root directory
+- Updated nixpacks.toml to install from root requirements.txt
+- Simplified start command to run from root
 
 ### "Nixpacks build failed - No start command could be found"
 **Cause:** Railway detected Node.js instead of Python due to package.json file
