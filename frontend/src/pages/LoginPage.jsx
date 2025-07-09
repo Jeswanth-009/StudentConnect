@@ -50,11 +50,24 @@ const LoginPage = () => {
     setError('');
     setSuccess('');
     try {
+      console.log('Attempting signup with data:', { ...data, password: '[HIDDEN]' });
       await signup(data);
       setTabValue(0);
       setSuccess('Account created successfully! Please login.');
     } catch (error) {
-      setError(error.response?.data?.detail || 'Signup failed');
+      console.error('Signup error:', error);
+      console.error('Error response:', error.response);
+      let errorMessage = 'Signup failed';
+      
+      if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error.message) {
+        errorMessage = error.message;
+      } else if (error.code === 'ERR_NETWORK') {
+        errorMessage = 'Network error: Unable to connect to server. Please check your internet connection.';
+      }
+      
+      setError(errorMessage);
     }
     setLoading(false);
   };
@@ -153,7 +166,14 @@ const LoginPage = () => {
                 fullWidth
                 label="Username"
                 margin="normal"
-                {...signupForm.register('username', { required: 'Username is required' })}
+                {...signupForm.register('username', { 
+                  required: 'Username is required',
+                  minLength: { value: 3, message: 'Username must be at least 3 characters' },
+                  pattern: { 
+                    value: /^[a-zA-Z0-9_]+$/, 
+                    message: 'Username can only contain letters, numbers, and underscores' 
+                  }
+                })}
                 error={!!signupForm.formState.errors.username}
                 helperText={signupForm.formState.errors.username?.message}
               />

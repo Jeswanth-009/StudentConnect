@@ -16,7 +16,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",  # Local development
-        "https://your-frontend-netlify-url.netlify.app",  # Your Netlify frontend URL
+        "https://studentconnect0.netlify.app",  # Your actual Netlify frontend URL
         "*"  # Allow all for now - restrict in production
     ],
     allow_credentials=True,

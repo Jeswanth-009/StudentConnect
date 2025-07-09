@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>StudentConnect API Test</h1>
+    <button onclick="testBackend()">Test Backend Connection</button>
+    <button onclick="testSignup()">Test Signup</button>
+    <div id="result"></div>
+
+    <script>
+        const API_URL = 'https://studentconnect-backend.onrender.com';
+        
+        async function testBackend() {
+            try {
+                const response = await fetch(API_URL + '/');
+                const data = await response.json();
+                document.getElementById('result').innerHTML = `<p style="color: green;">Backend is working: ${JSON.stringify(data)}</p>`;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<p style="color: red;">Backend error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testSignup() {
+            try {
+                const testUser = {
+                    name: "Test User",
+                    username: "testuser123",
+                    email: "test@example.com",
+                    password: "testpass123",
+                    bio: "Test bio"
+                };
+                
+                const response = await fetch(API_URL + '/api/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testUser)
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('result').innerHTML = `<p style="color: green;">Signup successful: ${JSON.stringify(data)}</p>`;
+                } else {
+                    const errorData = await response.json();
+                    document.getElementById('result').innerHTML = `<p style="color: orange;">Signup failed: ${JSON.stringify(errorData)}</p>`;
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<p style="color: red;">Network error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

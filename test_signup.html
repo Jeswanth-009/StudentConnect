@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Signup API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .result { margin-top: 20px; padding: 10px; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        form { margin: 20px 0; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test StudentConnect Signup</h1>
+        
+        <h2>1. Test Backend Connection</h2>
+        <button onclick="testBackend()">Test Backend</button>
+        <div id="backendResult"></div>
+        
+        <h2>2. Test Signup</h2>
+        <form onsubmit="testSignup(event)">
+            <input type="text" id="name" placeholder="Full Name" required>
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <textarea id="bio" placeholder="Bio (optional)"></textarea>
+            <button type="submit">Test Signup</button>
+        </form>
+        <div id="signupResult"></div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'https://studentconnect-sage.vercel.app';
+        
+        async function testBackend() {
+            const resultDiv = document.getElementById('backendResult');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="result success">✅ Backend is working! Response: ${JSON.stringify(data)}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">❌ Backend error: ${response.status} - ${JSON.stringify(data)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">❌ Connection error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testSignup(event) {
+            event.preventDefault();
+            const resultDiv = document.getElementById('signupResult');
+            resultDiv.innerHTML = 'Testing signup...';
+            
+            const userData = {
+                name: document.getElementById('name').value,
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                bio: document.getElementById('bio').value || null,
+                profile_picture: null
+            };
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/auth/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="result success">✅ Signup successful! User created: ${JSON.stringify(data, null, 2)}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">❌ Signup failed: ${response.status} - ${JSON.stringify(data, null, 2)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">❌ Connection error: ${error.message}</div>`;
+            }
+        }
+        
+        // Test backend on page load
+        window.onload = testBackend;
+    </script>
+</body>
+</html>
