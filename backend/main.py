@@ -14,7 +14,11 @@ app = FastAPI(title="StudentConnect API", version="1.0.0")
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, restrict this to your frontend URL
+    allow_origins=[
+        "http://localhost:3000",  # Local development
+        "https://your-frontend-netlify-url.netlify.app",  # Your Netlify frontend URL
+        "*"  # Allow all for now - restrict in production
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
