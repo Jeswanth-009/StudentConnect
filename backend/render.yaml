@@ -3,36 +3,11 @@ services:
     name: studentconnect-backend
     runtime: python3
     buildCommand: |
-      mkdir -p /tmp/.cargo /tmp/.rustup
-      export CARGO_HOME=/tmp/.cargo
-      export RUSTUP_HOME=/tmp/.rustup
-      export CARGO_NET_GIT_FETCH_WITH_CLI=true
-      export CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
       pip install --upgrade pip setuptools wheel
-      pip install --only-binary=:all: --no-cache-dir --prefer-binary --force-reinstall cryptography bcrypt
-      pip install --only-binary=:all: --no-cache-dir --prefer-binary --force-reinstall -r requirements-deploy.txt
+      pip install -r requirements-deploy.txt
     startCommand: uvicorn main:app --host=0.0.0.0 --port=$PORT
     plan: free
     env: python
     pythonVersion: 3.11.9
     region: oregon
     healthCheckPath: /
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.9
-      - key: PIP_ONLY_BINARY
-        value: ":all:"
-      - key: PIP_NO_BUILD_ISOLATION
-        value: "false"
-      - key: PIP_PREFER_BINARY
-        value: "1"
-      - key: PIP_NO_COMPILE
-        value: "1"
-      - key: CARGO_HOME
-        value: /tmp/.cargo
-      - key: RUSTUP_HOME
-        value: /tmp/.rustup
-      - key: CARGO_NET_GIT_FETCH_WITH_CLI
-        value: "true"
-      - key: CARGO_REGISTRIES_CRATES_IO_PROTOCOL
-        value: sparse

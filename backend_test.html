@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Backend Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; max-width: 800px; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; cursor: pointer; }
+        input { width: 200px; padding: 8px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Backend Connection Test</h1>
+    
+    <h2>Test Different Backend URLs:</h2>
+    
+    <div>
+        <label>Backend URL:</label>
+        <input type="text" id="backendUrl" value="https://studentconnect-sage.vercel.app" style="width: 400px;">
+        <button onclick="testConnection()">Test Connection</button>
+    </div>
+    
+    <div>
+        <h3>Quick Test Buttons:</h3>
+        <button onclick="testUrl('https://studentconnect-sage.vercel.app')">Test Vercel</button>
+        <button onclick="testUrl('https://studentconnect-backend.onrender.com')">Test Render</button>
+        <button onclick="testUrl('http://localhost:8000')">Test Local</button>
+    </div>
+    
+    <div id="results"></div>
+    
+    <script>
+        async function testUrl(url) {
+            document.getElementById('backendUrl').value = url;
+            await testConnection();
+        }
+        
+        async function testConnection() {
+            const url = document.getElementById('backendUrl').value;
+            const resultsDiv = document.getElementById('results');
+            
+            resultsDiv.innerHTML = '<div>Testing connection to: ' + url + '</div>';
+            
+            // Test 1: Root endpoint
+            try {
+                const response = await fetch(url + '/');
+                const data = await response.json();
+                resultsDiv.innerHTML += '<div class="result success">✅ Root endpoint working: ' + JSON.stringify(data) + '</div>';
+            } catch (error) {
+                resultsDiv.innerHTML += '<div class="result error">❌ Root endpoint failed: ' + error.message + '</div>';
+                return; // Don't test other endpoints if root fails
+            }
+            
+            // Test 2: Signup endpoint
+            try {
+                const signupData = {
+                    name: "Test User",
+                    email: "test@example.com",
+                    username: "testuser",
+                    password: "testpass123",
+                    bio: "Test bio"
+                };
+                
+                const response = await fetch(url + '/api/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(signupData)
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    resultsDiv.innerHTML += '<div class="result success">✅ Signup endpoint working: ' + JSON.stringify(data) + '</div>';
+                } else {
+                    resultsDiv.innerHTML += '<div class="result error">❌ Signup endpoint error (' + response.status + '): ' + JSON.stringify(data) + '</div>';
+                }
+            } catch (error) {
+                resultsDiv.innerHTML += '<div class="result error">❌ Signup endpoint failed: ' + error.message + '</div>';
+            }
+        }
+        
+        // Auto-test on page load
+        window.onload = () => testConnection();
+    </script>
+</body>
+</html>
