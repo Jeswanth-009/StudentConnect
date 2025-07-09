@@ -112,7 +112,7 @@ async def update_profile(
                 detail="Username already taken"
             )
     
-    update_data = {k: v for k, v in user_update.dict().items() if v is not None}
+    update_data = {k: v for k, v in user_update.model_dump().items() if v is not None}
     update_data["updated_at"] = datetime.utcnow()
     
     updated_user = await update_user(str(current_user["_id"]), update_data)

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from typing import Optional, List
 from datetime import datetime
 from enum import Enum
@@ -94,6 +94,8 @@ class CommentCreate(CommentBase):
     post_id: str
 
 class CommentResponse(CommentBase):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    
     id: str
     post_id: str
     author_id: str
@@ -111,3 +113,6 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: Optional[str] = None
+
+# Update forward references
+CommentResponse.model_rebuild()
